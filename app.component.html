@@ -1,0 +1,160 @@
+ <link rel="stylesheet" href="/ng2-datepicker/src/css/desktop.css">
+<div id="container">
+        <div id="wrapper">
+            <div class="heading visible-desktop">
+                <h1>{{appTitle}}</h1></div>
+            <div class="cS-containerInner">
+                <div class="calcCon">
+                    <p class="disclaimer"><span class="redTxt">*</span>Mandatory</p>
+                    <!-- Calculator Wrapper -->
+                    <div class="calculatorWrapper">
+                        <!-- Input -->
+                        <div class="inputSectionCover" [hidden]="EditedHidden"></div>
+                        <div class="section inputSection first">
+                            <h2 class="inputSectionHead">Please enter your loan detail</h2>
+                            
+                            <ul class="inputList">
+                                <li class="width50 c2">
+                                    <div class="s1">
+                                        <img src="src/images/icon_rupee.png" alt="">
+                                    </div>
+                                    <div class="s5">
+                                        <div class="fFileds">
+                                            <div>
+                                                <p class="noMH">Loan Amount <span class="redTxt">*</span></p>
+                                                <div class="metrics prefix">INR</div>
+                                                <!--<input id="loan" type="number" maxlength="9" required [(ngModel)]="LoanAmount"> -->
+                                                <input id="loan" (ngModelChange)="LoanValidate($event)" type="number" [min]="minLoan" [max]="maxLoan" minlength="6" maxlength="9" [(ngModel)]="LoanAmount" name="Loan" required #Loan="ngModel" />
+                                            </div>
+                                        </div>
+                                    </div> <br style="clear:both;" />
+                                    <div class="calc-err" *ngIf="Loan.errors && (Loan.dirty || Loan.touched)">
+                                        <div class="error redTxt" *ngIf="Loan.errors.required">Please enter the Loan Amount</div>                                        
+                                    </div>
+                                    <div class="calc-err error redTxt" *ngIf="minMaxError==true">Please enter the Loan Amount (Min Rs.210000 - Max Rs.100000000)</div>
+                                </li>
+                                <li class="width50 c2 last">
+                                    <div class="s1">
+                                        <img src="src/images/icon_rupee.png" alt="">
+                                    </div>
+                                    <div class="s5">
+                                        <div class="fFileds">
+                                            <div class="label v7">
+                                                <p class="noMH">Interest Rate <span class="redTxt">*</span></p>
+                                            </div>                                         
+    
+                                            <div id="rate" class="sliderValDisp v1">{{InterestRateSlider}}</div>
+                                            <div class="metrics">%</div>
+                                            <div class="rangeSlider">
+                                             <input class="inputRangeSlider" type="range" name="points" id="points" value="" [min]="minValue" [max]="maxValue" data-show-value="true" data-popup-enabled="true" [(ngModel)]="InterestRateSlider" />
+                                            
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="section inputSection second">
+                            <ul class="inputList">
+                                <li class="width50 c2">
+                                    <div class="s1">
+                                        <img src="src/images/icon_cal.png" alt="">
+                                    </div>
+                                    <div class="s5">
+                                        <div class="fFileds">
+                                            <div class="label v8">
+                                                <p class="noMH">Loan Term <span class="redTxt">*</span></p>
+                                            </div>
+                                            <div id="tenure" class="sliderValDisp v1">{{LoanTermSlider}}</div>
+                                            <div class="metrics">Months</div>
+                                            <input class="inputRangeSlider" type="range" name="LoanTerm" id="LoanTerm" value="" [min]="minValue1" [max]="maxValue1" data-show-value="true" data-popup-enabled="true" [(ngModel)]="LoanTermSlider" />
+                                        </div>                                        
+                                    </div>
+                                </li>
+                                <li class="width50 c2 last">
+                                    <div class="s1">
+                                        <img src="src/images/icon_calc.png" alt="">
+                                    </div>
+                                    <div class="s5">
+                                        <div class="fFileds">
+                                            <div>
+                                                <p class="noMH">EMI Start Date <span class="redTxt">*</span></p>
+                                                <ng2-datepicker [options]="options" [(ngModel)]="date" name="date"></ng2-datepicker>
+                                                <!--<input id="emi-date" type="text" class="hasDatepicker" [(ngModel)]="EMIStartDate"> -->
+                                            </div>
+                                        </div>
+                                        <div class="calc-err emidate-calc-err">
+                                            <div class="calc-err error redTxt" [hidden]="EMIerror" style="margin-left: -20px;">Please enter the EMI date</div>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Output -->
+                        <div class="section1 outputSection" [hidden]="HideEMIAmount">
+                            <ul class="itemRack output fLeft33">
+                                <li>
+                                    <div class="s2 noMargin">
+                                        <strong>EMI</strong>
+                                    </div>
+                                    <div class="s4 output" id="emi">INR {{formattedEmi}}</div>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!--Table -->
+                        <div class="section1 outputTable" [hidden]="Hidetable">
+                            <h2>Repayment Schedule</h2>
+                            <p class="pullLeft"><strong>These amounts are indicative only. Please get in touch with us for exact details.</strong></p>
+                            <!-- <p class="printOutputTable">
+                                <a class="printIcon white" href="javascript:printTables();" title="Print Repayment Schedule"></a>
+                            </p> -->
+                            <div class="clear"></div>
+                            <div class="tableCalcWrap printSection" id="section-to-print">
+                                <div class="table-wraper">
+                                    <table id="content-table">
+                                        <tbody>
+                                            <tr class="tableHeadBg">
+                                                <th>Months</th>
+                                                <th>Date</th>
+                                                <th>Opening Balance</th>
+                                                <th>EMI</th>
+                                                <th>Interest</th>
+                                                <th>Principal</th>
+                                                <th>Closing Balance</th>
+                                                <th>EMI Due Date</th>
+                                            </tr>
+                                            <tr *ngFor="let d of CalculatedData;let i = index" >
+                                                <td>{{i+1}}</td>
+                                                <td>{{d.startDate}}</td>
+                                                <td>{{d.OB}}</td>
+                                                <td>{{d.emi}}</td>
+                                                <td>{{d.interest}}</td>
+                                                <td>{{d.principal}}</td>
+                                                <td>{{d.tmp}}</td>
+                                                <td>{{d.dueDate}}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="inputButtonSection">
+                            <div class="left" (click)="CalculatedTable()" [hidden]="paymentSchedule">
+                                <a href="javascript:;"  title="CLICK HERE TO VIEW YOUR REPAYMENT SCHEDULE" class="blueBtn commBtnPro">CLICK HERE TO VIEW YOUR REPAYMENT SCHEDULE</a>
+                            </div>
+
+                            <div class="right step1" >
+                                <a title="CALCULATE" href="javascript:;" class="blueBtn calculate" [hidden]="CalculateBtn" (click)="calculateLoan()">Calculate</a>
+                                <a title="RESET" href="javascript:;" class="greyBtn reset" (click)="ResetLoan()">Reset</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>  
+   
